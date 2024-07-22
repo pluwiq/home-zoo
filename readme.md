@@ -31,3 +31,7 @@ Console application in which you create different animals as well as their trait
 * Output:
 
 `It's a ginger cat who weighs 7 pounds and says "meow"`
+
+* Hello:
+
+
