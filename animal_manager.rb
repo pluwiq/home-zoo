@@ -1,38 +1,61 @@
 # frozen_string_literal: true
-require_relative 'services/validate_age_service'
-require_relative 'services/validate_weight_service'
+
+require_relative 'services/create_animal_service'
+require_relative 'services/validate_passport_number_service'
 
 module AnimalManager
-  def self.find_animal_by_passport(cats, dogs, passport)
-    (cats + dogs).find { |animal| animal.passport_number == passport }
-  end
+  @cats = []
+  @dogs = []
 
-  def self.delete_animal(cats, dogs)
-    puts "Enter the passport number of the animal to delete:"
-    passport = gets.chomp
-    animal = find_animal_by_passport(cats, dogs, passport)
-    if animal
-      cats.delete(animal) || dogs.delete(animal)
-      puts "Animal with passport number #{passport} has been removed."
-    else
-      puts "Animal with passport number #{passport} was not found."
+  class << self
+    attr_accessor :cats, :dogs
+
+    def find_animal_by_passport(passport:)
+      (@cats + @dogs).find { |animal| animal.passport_number == passport }
     end
-  end
 
-  def self.edit_animal(cats, dogs)
-    puts "Enter the passport number of the animal to edit:"
-    passport = gets.chomp
-    animal = find_animal_by_passport(cats, dogs, passport)
-    if animal
-      new_age = Services::ValidateAgeService.new.call
-      new_weight = Services::ValidateWeightService.new.call
+    def get_passport
+      puts "Enter a passport number:"
+      gets.chomp
+    end
 
-      animal.instance_variable_set(:@age, new_age)
-      animal.instance_variable_set(:@weight, new_weight)
+    def with_animal(passport: nil)
+      passport ||= get_passport
+      unless (animal = find_animal_by_passport(passport: passport))
+        puts "Animal with passport number #{passport} was not found."
+      end
+      yield(animal) if animal && block_given?
+    end
 
-      puts "Animal information has been updated."
-    else
-      puts "Animal with passport number #{passport} was not found."
+    def delete_animal_by(passport: nil)
+      with_animal(passport: passport) do |animal|
+        @cats.delete(animal) || @dogs.delete(animal)
+        puts "Animal with passport number #{animal.passport_number} has been removed."
+      end
+    end
+
+    def find_animal
+      passport = AnimalManager.get_passport
+      animal = AnimalManager.find_animal_by_passport(passport: passport)
+      if animal
+        animal.animal_info
+      else
+        puts "Animal with #{passport} ID was not found."
+      end
+    end
+
+    def all_passport_numbers
+      (AnimalManager.cats + AnimalManager.dogs).map(&:passport_number)
+    end
+
+    def edit_animal_by(passport: nil)
+      with_animal(passport: passport) do |animal|
+        service = Services::CreateAnimalService.new(cats: @cats, dogs: @dogs, existing_passports: [])
+
+        animal.instance_variable_set(:@age, service.send(:validate_field, field: :age).to_i)
+        animal.instance_variable_set(:@weight, service.send(:validate_field, field: :weight).to_i)
+        puts "Animal information has been updated."
+      end
     end
   end
 end

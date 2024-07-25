@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 module AnimalUtils
-  def self.animal_info(animal)
-    puts "It's a #{animal.wool_color} " \
-           "#{animal.class.name.downcase} " \
-           "named #{animal.name}, #{animal.age} years old, " \
-           "who weighs #{animal.weight} pounds and says \"#{animal.talk}\""
-  end
+  def self.show_all_animals(cats:, dogs:)
+    unless cats.is_a?(Array) && dogs.is_a?(Array)
+      puts "Invalid input: cats and dogs should be arrays."
+      return
+    end
 
-  def self.show_all_animals(cats, dogs)
-    animals = cats + dogs
-    animals.each { |animal| animal_info(animal) }
+    (cats + dogs).each do |animal|
+      unless animal.is_a?(Animal)
+        puts "Invalid object: #{animal.inspect} is not an Animal."
+        next
+      end
+      animal.animal_info
+    end
   end
 end
