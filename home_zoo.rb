@@ -42,6 +42,6 @@ loop do
   when 6
     break
   else
-    puts "Wrong choice, please try again."
+    puts 'Wrong choice, please try again.'
   end
 end

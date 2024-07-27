@@ -15,7 +15,7 @@ module AnimalManager
     end
 
     def get_passport
-      puts "Enter a passport number:"
+      puts 'Enter a passport number:'
       gets.chomp
     end
 
@@ -27,7 +27,7 @@ module AnimalManager
       yield(animal) if animal && block_given?
     end
 
-    def delete_animal_by(passport: nil)
+    def delete_animal_by(passport:nil)
       with_animal(passport: passport) do |animal|
         @cats.delete(animal) || @dogs.delete(animal)
         puts "Animal with passport number #{animal.passport_number} has been removed."
@@ -35,13 +35,7 @@ module AnimalManager
     end
 
     def find_animal
-      passport = AnimalManager.get_passport
-      animal = AnimalManager.find_animal_by_passport(passport: passport)
-      if animal
-        animal.animal_info
-      else
-        puts "Animal with #{passport} ID was not found."
-      end
+      AnimalManager.find_animal_by_passport(passport: AnimalManager.get_passport)&.animal_info || puts('Animal with that ID was not found.')
     end
 
     def all_passport_numbers
@@ -54,7 +48,7 @@ module AnimalManager
 
         animal.instance_variable_set(:@age, service.send(:validate_field, field: :age).to_i)
         animal.instance_variable_set(:@weight, service.send(:validate_field, field: :weight).to_i)
-        puts "Animal information has been updated."
+        puts 'Animal information has been updated.'
       end
     end
   end

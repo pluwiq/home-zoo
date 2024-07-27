@@ -3,7 +3,7 @@
 require_relative 'animal'
 
 class Dog < Animal
-  def initialize(name:, age:, wool_color:, weight:, passport_number:)
+  def initialize(name:, age:, wool_color: 'bald', weight: nil, passport_number:)
     super(name:, age:, passport_number:)
     @wool_color = wool_color
     @weight = weight

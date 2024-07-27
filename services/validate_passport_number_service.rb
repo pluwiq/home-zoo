@@ -8,13 +8,13 @@ module Services
       @passport_numbers = existing_passport_numbers
     end
 
-    def perform
+    def call
       loop do
         begin
           passport_number = get_field_with_validation(
-            prompt: "Enter passport number (digits only):",
+            prompt: 'Enter passport number (digits only):',
             validation_regex: /\A\d+\z/,
-            error_message: "Error: Passport number should contain only digits."
+            error_message: 'Error: Passport number should contain only digits.'
           )
           validate_passport_number!(passport_number: passport_number)
           @passport_numbers << passport_number
@@ -28,7 +28,7 @@ module Services
     private
 
     def validate_passport_number!(passport_number:)
-      raise "Error: Passport number must be unique." unless unique_passport_number?(passport_number: passport_number)
+      raise 'Error: Passport number must be unique.' unless unique_passport_number?(passport_number: passport_number)
     end
 
     def unique_passport_number?(passport_number:)
