@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'base_service'
 require_relative 'validate_passport_number_service'
 
@@ -11,10 +12,9 @@ module Services
     end
 
     def call
-      return unless %w[cat dog].include?((animal_type = ask_animal_type))
+      return unless %w[cat dog].include?((animal_type = validate_field(field: :type).downcase))
 
-      attributes = gather_animal_attributes
-      animal = create_animal(animal_type: animal_type, attributes: attributes)
+      animal = create_animal(animal_type: animal_type, attributes: gather_animal_attributes)
 
       puts "#{animal_type.downcase} named #{animal.name} added successfully!"
 
@@ -23,53 +23,49 @@ module Services
 
     private
 
-    def ask_animal_type
-      get_field_with_validation(
+    VALIDATION_PARAMS = {
+      type: {
         prompt: 'What animal would you like to add? (cat/dog)',
         validation_regex: /\A(cat|dog)\z/i,
         error_message: "Error: Animal type must be 'cat' or 'dog'."
-      ).downcase
-    end
+      },
+      name: {
+        prompt: 'Enter animal name (letters only):',
+        validation_regex: /\A[a-zA-Z]+\z/,
+        error_message: 'Error: Name should contain only letters.'
+      },
+      age: {
+        prompt: 'Enter the age of the animal (digits only, greater than 0):',
+        validation_regex: /\A[1-9]\d*\z/,
+        error_message: 'Error: Age should be a positive number greater than 0.'
+      },
+      wool_color: {
+        prompt: "Enter the animal's wool color (letters only):",
+        validation_regex: /\A[a-zA-Z]+\z/,
+        error_message: 'Error: Wool color should contain only letters.'
+      },
+      weight: {
+        prompt: "Enter the animal's weight in pounds (positive number greater than 0):",
+        validation_regex: /\A(?:0\.\d{1,}|[1-9]\d*(?:\.\d{1,})?)\z/,
+        error_message: 'Error: Weight should be a positive number greater than 0.'
+      }
+    }.freeze
 
     def gather_animal_attributes
       {
         name: validate_field(field: :name),
         age: validate_field(field: :age).to_i,
         wool_color: validate_field(field: :wool_color),
-        weight: validate_field(field: :weight).to_i,
+        weight: validate_field(field: :weight).to_f,
         passport_number: Services::ValidatePassportNumberService.new(existing_passport_numbers: @existing_passports).call
       }
     end
 
-    VALIDATION_PARAMS = {
-      name: {
-        prompt: 'Enter animal name (letters only):',
-        regex: /\A[a-zA-Z]+\z/,
-        error_message: 'Error: Name should contain only letters.'
-      },
-      age: {
-        prompt: 'Enter the age of the animal (digits only):',
-        regex: /\A\d+\z/,
-        error_message: 'Error: Age should contain only digits.'
-      },
-      wool_color: {
-        prompt: "Enter the animal's wool color (letters only):",
-        regex: /\A[a-zA-Z]+\z/,
-        error_message: 'Error: Wool color should contain only letters.'
-      },
-      weight: {
-        prompt: "Enter the animal's weight in pounds (digits only):",
-        regex: /\A\d+\z/,
-        error_message: 'Error: Weight should contain only digits.'
-      }
-    }.freeze
-
     def validate_field(field:)
-      params = VALIDATION_PARAMS[field]
       get_field_with_validation(
-        prompt: params[:prompt],
-        validation_regex: params[:regex],
-        error_message: params[:error_message]
+        prompt: VALIDATION_PARAMS[field][:prompt],
+        validation_regex: VALIDATION_PARAMS[field][:validation_regex],
+        error_message: VALIDATION_PARAMS[field][:error_message]
       )
     end
 
