@@ -3,7 +3,7 @@
 module Services
   class BaseService
     def perform
-      raise NotImplementedError, 'Subclasses must implement the call method'
+      raise NotImplementedError, 'Subclasses must implement the call method.'
     end
 
     private

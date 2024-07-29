@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'base_service'
 require_relative 'create_animal_service'
 

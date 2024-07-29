@@ -31,12 +31,12 @@ loop do
 
   case choice
   when 1
-    Services::CreateAnimalService.new(cats: cats, dogs: dogs, existing_passports: AnimalManager.all_passport_numbers).call
+    Services::CreateAnimalService.new(cats:, dogs:, existing_passports: AnimalManager.all_passport_numbers).call
   when 2
-    AnimalUtils.show_all_animals(cats: cats, dogs: dogs)
+    AnimalUtils.show_all_animals(cats:, dogs:)
   when 3
     passport = AnimalManager.get_passport
-    Services::FindAnimalService.new(cats: cats, dogs: dogs).find_and_execute(passport: passport) do |animal|
+    Services::FindAnimalService.new(cats:, dogs:).find_and_execute(passport:) do |animal|
       animal.animal_info
     end
   when 4

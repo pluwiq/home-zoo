@@ -18,14 +18,12 @@ class Animal
   end
 
   def animal_info
-    if is_a?(Animal)
-      puts "It's a #{wool_color}" \
-             " #{self.class.name} " \
-             "named #{name}, #{age} years old," \
-             "who weighs #{weight} pounds and says \"#{talk}\""
-    else
-      puts 'This is not a valid Animal object.'
-    end
+    return puts 'This is not a valid Animal object.' unless is_a?(Animal)
+
+    puts "It's a #{wool_color}" \
+           " #{self.class.name} " \
+           "named #{name}, #{age} years old," \
+           "who weighs #{weight} pounds and says \"#{talk}\""
   end
 
   private

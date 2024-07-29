@@ -14,7 +14,7 @@ module Services
     def call
       return unless %w[cat dog].include?((animal_type = validate_field(field: :type).downcase))
 
-      animal = create_animal(animal_type: animal_type, attributes: gather_animal_attributes)
+      animal = create_animal(animal_type:, attributes: gather_animal_attributes)
 
       puts "#{animal_type.downcase} named #{animal.name} added successfully!"
 
@@ -46,7 +46,7 @@ module Services
       },
       weight: {
         prompt: "Enter the animal's weight in pounds (positive number greater than 0):",
-        validation_regex: /\A(?:0\.\d{1,}|[1-9]\d*(?:\.\d{1,})?)\z/,
+        validation_regex: /\A(?:0\.\d+|[1-9]\d*(?:\.\d+)?)\z/,
         error_message: 'Error: Weight should be a positive number greater than 0.'
       }
     }.freeze
